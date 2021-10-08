@@ -1,19 +1,13 @@
-from flask import Flask
-from recognizer import emotion_recognizer, neutral_words, negative_words, positive_words
+from flask import Flask, request
 from dostoevsky_recognizer import dostoevsky
 
 app = Flask(__name__)
 
-# Функция Николая с натренированной моделью
-@app.route("/api/v1/predict/slow", methods = ['GET'])
+@app.route("/api/v1/predict", methods = ['POST'])
 def predict_slow():
-    return dostoevsky('Она любит шоколадки. Я точно знаю!')
-
-# Функция Дмитрия, дописанная слегка
-@app.route("/api/v1/predict/fast", methods = ['GET'])
-def predict_fast():
-    return emotion_recognizer('Она любит шоколадки. Я точно знаю!', neutral_words, negative_words, positive_words)
-
+    data = request.json
+    emotion = dostoevsky(data['text'])
+    return {'emotions': [emotion]}
 
 if __name__ == '__main__':
-    app.run()#host='0.0.0.0'
+    app.run(debug=True)
