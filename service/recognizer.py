@@ -1,6 +1,8 @@
-def emotion_recognizer(text):
-    import pandas as pd
-    words_df = pd.read_csv('kartaslovsent.csv', encoding = 'utf-8', sep=';')
+import pandas as pd
+
+
+def making_dataset(filename='kartaslovsent.csv'):
+    words_df = pd.read_csv(filename, encoding = 'utf-8', sep=';')
     words_df = words_df[['term', 'tag', 'pstv', 'ngtv', 'neut']]
 
     negative_words = words_df[words_df['tag'] == 'NGTV']
@@ -10,31 +12,35 @@ def emotion_recognizer(text):
     neutral_words = words_df[words_df['tag'] == 'NEUT']
     neutral_words = neutral_words.sort_values(by='neut', ascending = False)
 
-    '''Принимает текст, оценивает его эмоциональную окраску.
-    Возвращает positive/negative/neutral'''
-    
+    return negative_words, positive_words, neutral_words
+
+negative_words, positive_words, neutral_words = making_dataset(filename='kartaslovsent.csv')
+
+def emotion_recognizer(text, negative_words, positive_words, neutral_words):
     negative_color, positive_color, neutral_color = 0, 0, 0
-    text = text.lower()
-    text = text.strip(',').split(' ')
-    for word in text:
-        if len(word) < 3: #чтобы исключить союзы и предлоги
+    new_text = text.lower().split(' ')
+    num_of_real_words = len(new_text)
+    for word in new_text:
+        word = word.replace(',','').replace('.','').replace('!','').replace('?','').strip()
+        if len(word) < 3: # чтобы исключить союзы и предлоги
+            num_of_real_words -= 1
             continue
-        for check_word in list(negative_words['term']):
-            if word in check_word: 
-                negative_color +=1
-                continue
-        for check_word in list(positive_words['term']):
-            if word in check_word: 
-                positive_color +=1
-                continue
-        for check_word in list(neutral_words['term']):
-            if word in check_word: 
-                neutral_color +=1
-                continue
-                
+        else:
+            if word in list(negative_words['term']):
+                negative_color += 1
+            if word in list(positive_words['term']):
+                positive_color += 1
+            if word in list(neutral_words['term']):
+                neutral_color += 1
+    
+    #print(f'Общее число слов в комментарии {num_of_real_words}')            
+    #print(f' Общее число негативных слов - {negative_color}, позитивных слов {positive_color}, нейтральных слов {neutral_color}')
+    
     if negative_color > positive_color and negative_color > neutral_color:
-        return 'negative'
+        return (f'Сообщение: {text} <br> Эмоциональная окраска: negative')
     elif positive_color > negative_color and positive_color > neutral_color:
-        return 'positive'
+        return (f'Сообщение: {text} <br> Эмоциональная окраска: positive')
     elif neutral_color > negative_color and neutral_color > positive_color:
-        return 'neutral'
+        return (f'Сообщение: {text} <br> Эмоциональная окраска: neutral')
+    else:
+        return (f"Сообщение: {text} <br> Эмоциональная окраска: can't predict")
