@@ -33,14 +33,11 @@ def emotion_recognizer(text, negative_words, positive_words, neutral_words):
             if word in list(neutral_words['term']):
                 neutral_color += 1
     
-    #print(f'Общее число слов в комментарии {num_of_real_words}')            
-    #print(f' Общее число негативных слов - {negative_color}, позитивных слов {positive_color}, нейтральных слов {neutral_color}')
-    
     if negative_color > positive_color and negative_color > neutral_color:
-        return (f'Сообщение: {text} <br> Эмоциональная окраска: negative')
+        return 'negattive'
     elif positive_color > negative_color and positive_color > neutral_color:
-        return (f'Сообщение: {text} <br> Эмоциональная окраска: positive')
+        return 'positive'
     elif neutral_color > negative_color and neutral_color > positive_color:
-        return (f'Сообщение: {text} <br> Эмоциональная окраска: neutral')
+        return 'neutral'
     else:
-        return (f"Сообщение: {text} <br> Эмоциональная окраска: can't predict")
+        return "can't predict"
