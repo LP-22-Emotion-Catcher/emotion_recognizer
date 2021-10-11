@@ -1,15 +1,10 @@
 from dostoevsky.tokenization import RegexTokenizer
 from dostoevsky.models import FastTextSocialNetworkModel
 
-def dostoevsky(data):
+def dostoevsky(msg):
     tokenizer = RegexTokenizer()
-    tokens = tokenizer.split('всё очень плохо')
     model = FastTextSocialNetworkModel(tokenizer=tokenizer)
-    messages = []
-    messages.append(data)
-    
-    results = model.predict(messages, k=5)
-    
-    for message, sentiment in zip(messages, results):
+    result = model.predict([msg], k=5)
+    for message, sentiment in zip([msg], result):
         return(f'{max(sentiment, key=sentiment.get)}')
 
