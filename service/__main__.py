@@ -1,5 +1,6 @@
 from flask import Flask, request
-from service.dostoevsky_recognizer import dostoevsky
+#from service.dostoevsky_recognizer import dostoevsky
+from dostoevsky_recognizer import dostoevsky
 
 app = Flask(__name__)
 
