@@ -1,11 +1,9 @@
-import os
 from dostoevsky.tokenization import RegexTokenizer
 from dostoevsky.models import FastTextSocialNetworkModel
-#from service.config import EMOTION_THRESHOLD
-from config import EMOTION_THRESHOLD
+from service.config import EMOTION_THRESHOLD
 
 def dostoevsky(msg) -> str:
-    emotion_threshold = EMOTION_THRESHOLD #if recognition result exceed it will return positive or negative. Else return negative
+    emotion_threshold = float(EMOTION_THRESHOLD) #if recognition result exceed it will return positive or negative. Else return negative
     tokenizer = RegexTokenizer()
     model = FastTextSocialNetworkModel(tokenizer=tokenizer)
     result = model.predict([msg], k=5)
