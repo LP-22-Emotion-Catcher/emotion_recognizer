@@ -1,2 +1,2 @@
 # emotion_recognizer
-He knows how to recognize text emotion color
+He knows how to recognise text emotion color
