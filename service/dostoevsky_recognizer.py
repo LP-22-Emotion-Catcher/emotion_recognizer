@@ -1,17 +1,35 @@
 from dostoevsky.tokenization import RegexTokenizer
 from dostoevsky.models import FastTextSocialNetworkModel
-from service.config import EMOTION_THRESHOLD
+from service.config import RELEVANT_EMOTION_THRESHOLD, DIFF_SCORE_THRESHOLD
 
-def dostoevsky(msg) -> str:
-    emotion_threshold = float(EMOTION_THRESHOLD) #if recognition result exceed it will return positive or negative. Else return negative
+
+def dostoevsky(msg):
     tokenizer = RegexTokenizer()
     model = FastTextSocialNetworkModel(tokenizer=tokenizer)
     result = model.predict([msg], k=5)
-    for emotion in result[0]:
-        if emotion == 'positive' or emotion == 'negative':
-            score = result[0][emotion]
-            if score >= emotion_threshold:
-                return(emotion)
-            return(f'low level {emotion}')
-        else: 
-            continue
+    positive = result[0]['positive']
+    negative = result[0]['negative']
+    diff_score = abs(positive - negative)
+    if positive > negative:
+        if diff_score < float(DIFF_SCORE_THRESHOLD):
+            score = float(f'{positive:.3f}')
+            if score < float(RELEVANT_EMOTION_THRESHOLD):
+                return
+            return(['positive', score])
+        else:
+            score = float(f'{negative:.3f}')
+            if score < float(RELEVANT_EMOTION_THRESHOLD):
+                return
+            return(['negative', score])
+    else:
+        score = float(f'{negative:.3f}')
+        if diff_score < float(DIFF_SCORE_THRESHOLD):
+            score = float(f'{negative:.3f}')
+            if score < float(RELEVANT_EMOTION_THRESHOLD):
+                return
+            return(['negative', score])
+        else:
+            score = float(f'{positive:.3f}')
+            if score < float(RELEVANT_EMOTION_THRESHOLD):
+                return
+            return(['positive', score])
