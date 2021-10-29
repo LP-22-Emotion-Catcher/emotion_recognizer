@@ -23,5 +23,5 @@ def predict_slow():
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
     logger.info('Emotion recogniser service started')
